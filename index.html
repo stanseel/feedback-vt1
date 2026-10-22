@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Feedbackgesprekken VT1</title>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&display=swap">
+<style>
+/* Layout: narrow column. Search for your own name first, then the full overview per Thursday as tabs, with the morning and afternoon side by side */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --ink:#17212c; --muted:#5d6977; --line:#d8dee6; --soft:#f5f7f9;
+  --stijn:#3a47c4; --stijn-bg:#e8eafb; --joris:#0b7a6b; --joris-bg:#dff3ef;
+  --mark:#fff1b8; --mark-ink:#5a4500; --done:#1f7a3a; --done-bg:#e3f4e8; --warn:#9a5b00;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171d; --surface:#1a2129; --ink:#e7ecf1; --muted:#9aa6b3; --line:#2c3642; --soft:#151b22;
+  --stijn:#9aa5ff; --stijn-bg:#262c55; --joris:#5fd4bf; --joris-bg:#173a35;
+  --mark:#4a3d0c; --mark-ink:#ffe48a; --done:#6fd68e; --done-bg:#183823; --warn:#f5c26b; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#12171d; --surface:#1a2129; --ink:#e7ecf1; --muted:#9aa6b3; --line:#2c3642; --soft:#151b22;
+  --stijn:#9aa5ff; --stijn-bg:#262c55; --joris:#5fd4bf; --joris-bg:#173a35;
+  --mark:#4a3d0c; --mark-ink:#ffe48a; --done:#6fd68e; --done-bg:#183823; --warn:#f5c26b; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding:0 16px}
+.wrap{max-width:860px;margin:0 auto;padding-block:40px 64px;display:grid;gap:36px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,6vw,2.9rem);line-height:1.05;font-weight:700}
+h2{font-size:1.35rem;font-weight:700}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+header{display:grid;gap:12px}
+header p{margin:0;max-width:62ch;color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:.88rem}
+.who{display:inline-flex;align-items:center;gap:6px;font-weight:700;border-radius:999px;padding:2px 10px;font-size:.85rem;white-space:nowrap}
+.who.Stijn{background:var(--stijn-bg);color:var(--stijn)}
+.who.Joris{background:var(--joris-bg);color:var(--joris)}
+.num{font-variant-numeric:tabular-nums}
+
+/* search */
+.search{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px}
+.search label{font-family:var(--f-display);font-weight:700;font-size:1.15rem}
+.search input{font:inherit;font-size:1.05rem;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink)}
+.search input:focus{outline:none;border-color:var(--stijn);box-shadow:0 0 0 3px var(--stijn-bg)}
+.hint{margin:0;color:var(--muted);font-size:.92rem}
+.results{display:grid;gap:12px}
+.card{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:10px}
+.card:first-child{border-top:0;padding-top:0}
+.card-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.card-head h3{font-size:1.2rem}
+.card-head span{color:var(--muted);font-size:.88rem}
+.appts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.appt{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;text-align:left;font:inherit;color:inherit;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer}
+.appt:hover{border-color:var(--muted)}
+.appt:focus-visible,.tab:focus-visible{outline:2px solid var(--stijn);outline-offset:2px}
+.appt .d{font-weight:700}
+.appt .t{font-family:var(--f-display);font-size:1.3rem;font-weight:700;grid-column:1}
+.appt .who{grid-row:1 / span 2;grid-column:2}
+.appt.past{opacity:.55}
+
+/* days */
+.days{display:grid;gap:16px}
+.days-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.tab{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 8px;cursor:pointer;display:grid;gap:6px;justify-items:center}
+.tab .dd{font-family:var(--f-display);font-weight:700;font-size:1.05rem;white-space:nowrap}
+.tab.past .dd{color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:18px}
+.panel-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.halves{display:grid;gap:28px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.col{display:grid;gap:6px;align-content:start;min-width:0}
+.col h4{margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:1rem}
+.col h4 small{color:var(--muted);font-weight:400;font-size:.85rem}
+.tab .wk{font-size:.8rem;color:var(--muted)}
+.tab[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.half{display:grid;gap:8px;align-content:start;min-width:0}
+.half h3{font-size:1.1rem;border-bottom:2px solid var(--line);padding-bottom:6px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.half h3 small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.85rem}
+ol.slots{list-style:none;margin:0;padding:0;display:grid}
+.slots li{display:grid;grid-template-columns:7.2rem 1fr auto;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line);align-items:center}
+.slots li.done .nm{color:var(--muted);font-weight:400;text-decoration:line-through;text-decoration-thickness:1px}
+.slots li.next{box-shadow:inset 3px 0 0 var(--ink);background:var(--soft)}
+.st{font-size:.78rem;font-weight:700;white-space:nowrap;justify-self:end}
+.st.ok{color:var(--done)}
+.st.nx{background:var(--ink);color:var(--surface);border-radius:999px;padding:1px 8px}
+.slots input{width:22px;height:22px;margin:0;accent-color:var(--done);cursor:pointer}
+.slots input:focus-visible{outline:2px solid var(--stijn);outline-offset:2px}
+.slots label{display:contents;cursor:pointer}
+.pace{font-size:.8rem;color:var(--muted);font-weight:400}
+.pace.late{color:var(--warn)}
+.live{display:flex;align-items:center;gap:6px}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--done)}
+.teacher-note{border-radius:10px;padding:10px 14px;background:var(--done-bg);color:var(--done);font-size:.92rem}
+.appt .ok{grid-column:1;font-size:.8rem;font-weight:700;color:var(--done)}
+.slots li:last-child{border-bottom:0}
+.slots .tm{color:var(--muted)}
+.slots .nm{font-weight:700;overflow-wrap:anywhere}
+.slots li.free .nm{font-weight:400;color:var(--muted);font-style:italic}
+.slots li.pause{background:var(--soft);border-radius:8px;border-bottom:0;margin:4px 0}
+.slots li.pause .nm{font-weight:400;color:var(--muted)}
+.slots li.hit{background:var(--mark);color:var(--mark-ink);border-radius:8px}
+.slots li.hit .tm{color:var(--mark-ink)}
+.slots li.end{color:var(--muted);font-size:.88rem;border-bottom:0}
+footer{color:var(--muted);font-size:.9rem;display:grid;gap:6px}
+.linkbtn{font:inherit;color:inherit;background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.teacher{margin-top:10px}
+.teacher form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.teacher input{font:inherit;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.teacher button[type=submit]{font:inherit;font-weight:700;padding:6px 14px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+footer p{margin:0;max-width:65ch}
+
+@media (max-width:640px){
+  .tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cols{grid-template-columns:1fr}
+  .wrap{padding-block:24px 48px;gap:28px}
+  .slots li{grid-template-columns:6.2rem 1fr auto}
+}
+@media (prefers-reduced-motion:no-preference){.slots li.hit{transition:background .3s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">VT1 · CMD-A &amp; CMD-B · 2026–2027</div>
+    <h1>Feedbackgesprekken</h1>
+    <p>Elke donderdag van 12 november tot 17 december kom je langs voor een kort feedbackgesprek. Stijn en Joris zitten er telkens allebei, en jij wisselt elke week van docent. Je komt 3 keer in de voormiddag en 3 keer in de namiddag. Kijk dus elke week goed na wanneer je verwacht wordt.</p>
+    <div class="facts">
+      <span class="fact">Voormiddag <span class="num">8.30–11.30</span></span>
+      <span class="fact">Namiddag <span class="num">12.30–15.30</span></span>
+      <span class="fact">15 min per student, elke week</span>
+    </div>
+  </header>
+
+  <section class="search" aria-labelledby="lbl-q">
+    <label id="lbl-q" for="q">Wanneer is mijn gesprek?</label>
+    <input id="q" type="search" autocomplete="off" placeholder="Typ je voor- of achternaam" spellcheck="false">
+    <div id="results" class="results" aria-live="polite"></div>
+  </section>
+
+  <section class="days" aria-labelledby="lbl-days">
+    <div class="days-head">
+      <h2 id="lbl-days">Overzicht per donderdag</h2>
+      <span class="hint" id="status">Stijn en Joris werken tegelijk, elk in een eigen lijst.</span>
+    </div>
+    <div class="teacher-note" id="tnote" hidden></div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="panel" role="tabpanel" id="panel"></div>
+  </section>
+
+  <footer>
+    <p>Wees een paar minuten op voorhand aanwezig, zodat het volgende gesprek op tijd kan starten.</p>
+    <p>Lukt jouw moment niet? Laat het zo snel mogelijk weten aan de docent van die week.</p>
+    <div id="teacher" class="teacher" hidden>
+      <button type="button" id="teacher-btn" class="linkbtn">Docent? Meld je aan om af te vinken</button>
+      <form id="login" hidden>
+        <label for="code">Docentencode</label>
+        <input id="code" type="password" autocomplete="current-password" required>
+        <button type="submit">Aanmelden</button>
+        <span id="login-msg" aria-live="polite"></span>
+      </form>
+    </div>
+  </footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+const DATA = {"days": [{"date": "2026-11-12", "am": {"Stijn": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Drieghe Lore"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Deliveyne Ellen"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Van Buggenhout Iona"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Nevejans Amber"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Van desteene Maïté"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Afia Boutaina"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Slingeneyer Leeloo"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Christiaens Milan"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Ojuri Tobi"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "De Smet Max"}], "Joris": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Dobbelaere Maaike"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Cissoko Djenab"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Monballiu Farah"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Segers Yana"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Braet Lynn"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Pareit Melana"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Mommerency Esmée"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Vanthuyne Jens"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "De Staelen Bo"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "Gashi Angjela"}]}, "pm": {"Stijn": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Barbé Zino"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "De Laender Timo"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Pauwels Senne"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Heyman Angelo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Temmerman Jordi"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Baes Marie"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "De Ruyver Eline"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Weng Amalia"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Lerooij Stan"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Peeters Anna Sofia (Anna)"}], "Joris": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Maesschalck Ilana"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Van Durme Rhune"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Vasseur Riet"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "De Cock Thibo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Ostyn Améline"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Van Beveren Axelle"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Beernaert Leonardo"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Pawlikowska Magdalena"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Verbeke Thibo"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": null}]}}, {"date": "2026-11-19", "am": {"Stijn": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Verbeke Thibo"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Pawlikowska Magdalena"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Maesschalck Ilana"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Vasseur Riet"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Van Durme Rhune"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Van Beveren Axelle"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Ostyn Améline"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Beernaert Leonardo"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "De Cock Thibo"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": null}], "Joris": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Temmerman Jordi"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Peeters Anna Sofia (Anna)"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Pauwels Senne"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "De Laender Timo"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Baes Marie"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Lerooij Stan"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Weng Amalia"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Barbé Zino"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Heyman Angelo"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "De Ruyver Eline"}]}, "pm": {"Stijn": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Segers Yana"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Dobbelaere Maaike"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Braet Lynn"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Vanthuyne Jens"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Monballiu Farah"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Gashi Angjela"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "De Staelen Bo"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Mommerency Esmée"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Pareit Melana"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Cissoko Djenab"}], "Joris": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Van desteene Maïté"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Christiaens Milan"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Deliveyne Ellen"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Afia Boutaina"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Van Buggenhout Iona"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "De Smet Max"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Nevejans Amber"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Drieghe Lore"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Slingeneyer Leeloo"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Ojuri Tobi"}]}}, {"date": "2026-11-26", "am": {"Stijn": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Slingeneyer Leeloo"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Heyman Angelo"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "De Laender Timo"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Baes Marie"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Van desteene Maïté"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Van Buggenhout Iona"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "De Ruyver Eline"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Afia Boutaina"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Christiaens Milan"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "Lerooij Stan"}], "Joris": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Vanthuyne Jens"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Beernaert Leonardo"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Ostyn Améline"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Gashi Angjela"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Van Beveren Axelle"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Monballiu Farah"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Cissoko Djenab"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Maesschalck Ilana"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Segers Yana"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": null}]}, "pm": {"Stijn": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Pauwels Senne"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Peeters Anna Sofia (Anna)"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Drieghe Lore"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Nevejans Amber"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Weng Amalia"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Temmerman Jordi"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Barbé Zino"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "De Smet Max"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Ojuri Tobi"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Deliveyne Ellen"}], "Joris": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Mommerency Esmée"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Pareit Melana"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Vasseur Riet"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Verbeke Thibo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Van Durme Rhune"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "De Staelen Bo"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Pawlikowska Magdalena"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Dobbelaere Maaike"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Braet Lynn"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "De Cock Thibo"}]}}, {"date": "2026-12-03", "am": {"Stijn": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "De Cock Thibo"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Pareit Melana"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Mommerency Esmée"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Van Durme Rhune"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Vasseur Riet"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Verbeke Thibo"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Dobbelaere Maaike"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Braet Lynn"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "De Staelen Bo"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "Pawlikowska Magdalena"}], "Joris": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Nevejans Amber"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Weng Amalia"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Barbé Zino"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Pauwels Senne"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Ojuri Tobi"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Peeters Anna Sofia (Anna)"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Drieghe Lore"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "De Smet Max"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Temmerman Jordi"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "Deliveyne Ellen"}]}, "pm": {"Stijn": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Van Beveren Axelle"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Maesschalck Ilana"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Ostyn Améline"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Beernaert Leonardo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Gashi Angjela"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Vanthuyne Jens"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Cissoko Djenab"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Monballiu Farah"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Segers Yana"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": null}], "Joris": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Heyman Angelo"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Lerooij Stan"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Slingeneyer Leeloo"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "De Laender Timo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Van Buggenhout Iona"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Christiaens Milan"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Baes Marie"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Afia Boutaina"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "De Ruyver Eline"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Van desteene Maïté"}]}}, {"date": "2026-12-10", "am": {"Stijn": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Afia Boutaina"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Baes Marie"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Christiaens Milan"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Deliveyne Ellen"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "De Laender Timo"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Van desteene Maïté"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Slingeneyer Leeloo"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Lerooij Stan"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Peeters Anna Sofia (Anna)"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "Heyman Angelo"}], "Joris": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Maesschalck Ilana"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "De Cock Thibo"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Ostyn Améline"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Gashi Angjela"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Van Beveren Axelle"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Pawlikowska Magdalena"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Vasseur Riet"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Van Durme Rhune"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Verbeke Thibo"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": null}]}, "pm": {"Stijn": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "De Ruyver Eline"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Nevejans Amber"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Barbé Zino"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "De Smet Max"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Temmerman Jordi"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Ojuri Tobi"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Van Buggenhout Iona"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Weng Amalia"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Pauwels Senne"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Drieghe Lore"}], "Joris": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Vanthuyne Jens"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Segers Yana"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Pareit Melana"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Beernaert Leonardo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Braet Lynn"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Monballiu Farah"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Mommerency Esmée"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Cissoko Djenab"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "De Staelen Bo"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Dobbelaere Maaike"}]}}, {"date": "2026-12-17", "am": {"Stijn": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Dobbelaere Maaike"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Pareit Melana"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Monballiu Farah"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "De Staelen Bo"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Mommerency Esmée"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Braet Lynn"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Cissoko Djenab"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Beernaert Leonardo"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "Segers Yana"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "Vanthuyne Jens"}], "Joris": [{"type": "slot", "start": "08:30", "end": "08:45", "name": "Pauwels Senne"}, {"type": "slot", "start": "08:45", "end": "09:00", "name": "Barbé Zino"}, {"type": "slot", "start": "09:00", "end": "09:15", "name": "Ojuri Tobi"}, {"type": "slot", "start": "09:15", "end": "09:30", "name": "Weng Amalia"}, {"type": "slot", "start": "09:30", "end": "09:45", "name": "Drieghe Lore"}, {"type": "pauze", "start": "09:45", "end": "10:00"}, {"type": "slot", "start": "10:00", "end": "10:15", "name": "Nevejans Amber"}, {"type": "slot", "start": "10:15", "end": "10:30", "name": "Temmerman Jordi"}, {"type": "slot", "start": "10:30", "end": "10:45", "name": "Van Buggenhout Iona"}, {"type": "slot", "start": "10:45", "end": "11:00", "name": "De Ruyver Eline"}, {"type": "slot", "start": "11:00", "end": "11:15", "name": "De Smet Max"}]}, "pm": {"Stijn": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Pawlikowska Magdalena"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Van Durme Rhune"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "De Cock Thibo"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Van Beveren Axelle"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Vasseur Riet"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "Verbeke Thibo"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Ostyn Améline"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Gashi Angjela"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Maesschalck Ilana"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": null}], "Joris": [{"type": "slot", "start": "12:30", "end": "12:45", "name": "Heyman Angelo"}, {"type": "slot", "start": "12:45", "end": "13:00", "name": "Van desteene Maïté"}, {"type": "slot", "start": "13:00", "end": "13:15", "name": "Afia Boutaina"}, {"type": "slot", "start": "13:15", "end": "13:30", "name": "Slingeneyer Leeloo"}, {"type": "slot", "start": "13:30", "end": "13:45", "name": "Christiaens Milan"}, {"type": "pauze", "start": "13:45", "end": "14:00"}, {"type": "slot", "start": "14:00", "end": "14:15", "name": "De Laender Timo"}, {"type": "slot", "start": "14:15", "end": "14:30", "name": "Peeters Anna Sofia (Anna)"}, {"type": "slot", "start": "14:30", "end": "14:45", "name": "Baes Marie"}, {"type": "slot", "start": "14:45", "end": "15:00", "name": "Lerooij Stan"}, {"type": "slot", "start": "15:00", "end": "15:15", "name": "Deliveyne Ellen"}]}}], "groups": {"Afia Boutaina": "VT1-CMD-A", "Baes Marie": "VT1-CMD-A", "Barbé Zino": "VT1-CMD-A", "Beernaert Leonardo": "VT1-CMD-A", "Christiaens Milan": "VT1-CMD-A", "De Cock Thibo": "VT1-CMD-A", "De Laender Timo": "VT1-CMD-A", "Deliveyne Ellen": "VT1-CMD-A", "De Ruyver Eline": "VT1-CMD-A", "De Smet Max": "VT1-CMD-A", "De Staelen Bo": "VT1-CMD-A", "Dobbelaere Maaike": "VT1-CMD-A", "Heyman Angelo": "VT1-CMD-A", "Maesschalck Ilana": "VT1-CMD-A", "Ojuri Tobi": "VT1-CMD-A", "Ostyn Améline": "VT1-CMD-A", "Segers Yana": "VT1-CMD-A", "Van Beveren Axelle": "VT1-CMD-A", "Vasseur Riet": "VT1-CMD-A", "Braet Lynn": "VT1-CMD-B", "Cissoko Djenab": "VT1-CMD-B", "Drieghe Lore": "VT1-CMD-B", "Gashi Angjela": "VT1-CMD-B", "Lerooij Stan": "VT1-CMD-B", "Mommerency Esmée": "VT1-CMD-B", "Monballiu Farah": "VT1-CMD-B", "Nevejans Amber": "VT1-CMD-B", "Pareit Melana": "VT1-CMD-B", "Pauwels Senne": "VT1-CMD-B", "Pawlikowska Magdalena": "VT1-CMD-B", "Peeters Anna Sofia (Anna)": "VT1-CMD-B", "Slingeneyer Leeloo": "VT1-CMD-B", "Temmerman Jordi": "VT1-CMD-B", "Van Buggenhout Iona": "VT1-CMD-B", "Van desteene Maïté": "VT1-CMD-B", "Van Durme Rhune": "VT1-CMD-B", "Vanthuyne Jens": "VT1-CMD-B", "Verbeke Thibo": "VT1-CMD-B", "Weng Amalia": "VT1-CMD-B"}};
+const DAYS = DATA.days;
+const TEACHERS = ["Stijn","Joris"];
+const MONTHS = ["jan","feb","maa","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+const MONTHS_LONG = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+const short = iso => { const [y,m,d] = iso.split("-").map(Number); return `${d} ${MONTHS[m-1]}`; };
+const long = iso => { const [y,m,d] = iso.split("-").map(Number); return `donderdag ${d} ${MONTHS_LONG[m-1]}`; };
+const tm = t => t.replace(":", ".").replace(/^0/, "");
+const today = (() => { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`; })();
+const isPast = iso => iso < today;
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// student -> appointments
+const students = new Map();
+DAYS.forEach((day, di) => {
+  for (const part of ["am","pm"]) for (const teacher of TEACHERS) for (const s of day[part][teacher]) {
+    if (s.type !== "slot" || !s.name) continue;
+    if (!students.has(s.name)) students.set(s.name, { name: s.name, group: DATA.groups[s.name], appts: [] });
+    students.get(s.name).appts.push({ di, date: day.date, teacher, start: s.start, end: s.end });
+  }
+});
+const list = [...students.values()].sort((a,b) => a.name.localeCompare(b.name, "nl"));
+
+let current = DAYS.findIndex(d => d.date >= today);
+if (current < 0) current = DAYS.length - 1;
+let highlight = null;
+
+// live check-offs (db): key -> {date,name,teacher,at,by}
+const slug = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const key = (date, name) => `${date}_${slug(name)}`;
+const checks = new Map();
+const busy = new Set();
+let canWrite = false, live = false;
+
+const tabsEl = document.getElementById("tabs");
+const panelEl = document.getElementById("panel");
+
+function renderTabs(){
+  tabsEl.innerHTML = DAYS.map((d,i) => `
+    <button class="tab${isPast(d.date) ? " past" : ""}" role="tab" id="tab-${i}" aria-selected="${i===current}" aria-controls="panel" data-i="${i}">
+      <span class="dd">do ${short(d.date)}</span>
+      <span class="wk">week ${i+1}</span>
+    </button>`).join("");
+}
+
+const mins = t => { const [h,m] = t.split(":").map(Number); return h*60 + m; };
+
+function pace(date, next){
+  if (date !== today || !next) return "";
+  const now = new Date(), diff = now.getHours()*60 + now.getMinutes() - mins(next.start);
+  if (Math.abs(diff) < 5) return `<span class="pace">volgens planning</span>`;
+  return diff > 0 ? `<span class="pace late">± ${diff} min achter</span>` : `<span class="pace">± ${-diff} min voor</span>`;
+}
+
+function renderCol(slots, teacher, range, date){
+  const named = slots.filter(s => s.type === "slot" && s.name);
+  const n = named.length;
+  const done = named.filter(s => checks.has(key(date, s.name))).length;
+  const next = done > 0 && done < n ? named.find(s => !checks.has(key(date, s.name))) : null;
+  const rows = slots.map(s => {
+    if (s.type === "pauze") return `<li class="pause"><span class="tm num">${tm(s.start)}–${tm(s.end)}</span><span class="nm">Pauze</span><span></span></li>`;
+    const hit = highlight && s.name === highlight ? " hit" : "";
+    if (!s.name) return `<li class="free"><span class="tm num">${tm(s.start)}–${tm(s.end)}</span><span class="nm">vrij</span><span></span></li>`;
+    const k = key(date, s.name), ok = checks.has(k), nx = next === s;
+    let st = ok ? `<span class="st ok">✓ geweest</span>` : nx ? `<span class="st nx">volgende</span>` : `<span></span>`;
+    if (canWrite) {
+      const id = `c-${k}`;
+      st = `<input type="checkbox" id="${id}" data-k="${k}" data-date="${date}" data-name="${esc(s.name)}" data-t="${teacher}" aria-label="${esc(s.name)} is geweest"${ok ? " checked" : ""}${busy.has(k) ? " disabled" : ""}>`;
+      return `<li class="${ok ? "done" : ""}${nx ? " next" : ""}${hit}"${hit ? ' id="hit"' : ""}><span class="tm num">${tm(s.start)}–${tm(s.end)}</span><label for="${id}" class="nm">${esc(s.name)}</label>${st}</li>`;
+    }
+    return `<li class="${ok ? "done" : ""}${nx ? " next" : ""}${hit}"${hit ? ' id="hit"' : ""}><span class="tm num">${tm(s.start)}–${tm(s.end)}</span><span class="nm">${esc(s.name)}</span>${st}</li>`;
+  }).join("");
+  const count = live && (done > 0 || date <= today) ? `${done}/${n} geweest` : `${n} studenten`;
+  return `<div class="col">
+    <h4><span class="who ${teacher}">${teacher}</span> <small class="num">${count} ${pace(date, next)}</small></h4>
+    <ol class="slots">${rows}<li class="end"><span class="tm num">${range}</span><span>einde les</span></li></ol>
+  </div>`;
+}
+
+function renderHalf(cols, title, range, group, date){
+  return `<div class="half">
+    <h3>${title} <small class="num">${group}</small></h3>
+    <div class="cols">${TEACHERS.map(t => renderCol(cols[t], t, range, date)).join("")}</div>
+  </div>`;
+}
+
+function renderPanel(){
+  const d = DAYS[current];
+  panelEl.setAttribute("aria-labelledby", `tab-${current}`);
+  panelEl.innerHTML = `
+    <div class="panel-head"><h2>${long(d.date)[0].toUpperCase() + long(d.date).slice(1)}</h2><span class="hint">week ${current+1} van ${DAYS.length}</span></div>
+    <div class="halves">
+      ${renderHalf(d.am, "Voormiddag", "11.30", "8.30–11.30", d.date)}
+      ${renderHalf(d.pm, "Namiddag", "15.30", "12.30–15.30", d.date)}
+    </div>`;
+}
+
+function select(i, scroll){
+  current = i; renderTabs(); renderPanel();
+  if (scroll) { const el = document.getElementById("hit") || panelEl; el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }); }
+}
+
+tabsEl.addEventListener("click", e => { const b = e.target.closest(".tab"); if (b) select(+b.dataset.i); });
+tabsEl.addEventListener("keydown", e => {
+  if (!["ArrowLeft","ArrowRight"].includes(e.key)) return;
+  const i = (current + (e.key === "ArrowRight" ? 1 : DAYS.length - 1)) % DAYS.length;
+  select(i); document.getElementById(`tab-${i}`).focus();
+});
+
+const qEl = document.getElementById("q");
+const resEl = document.getElementById("results");
+
+function renderResults(){
+  const q = norm(qEl.value);
+  try { localStorage.setItem("fb-q", qEl.value); } catch (e) {}
+  if (q.length < 2) {
+    highlight = null; renderPanel();
+    resEl.innerHTML = `<p class="hint">Typ minstens twee letters. Je ziet meteen al je momenten.</p>`;
+    return;
+  }
+  const words = q.split(" ");
+  const hits = list.filter(s => { const n = norm(s.name); return words.every(w => n.includes(w)); });
+  if (!hits.length) {
+    highlight = null; renderPanel();
+    resEl.innerHTML = `<p class="hint">Geen student gevonden met "${esc(qEl.value.trim())}". Probeer je achternaam.</p>`;
+    return;
+  }
+  highlight = hits.length === 1 ? hits[0].name : null;
+  renderPanel();
+  resEl.innerHTML = hits.slice(0, 6).map(s => `
+    <div class="card">
+      <div class="card-head"><h3>${esc(s.name)}</h3><span>${s.group}</span></div>
+      <div class="appts">${s.appts.map(a => `
+        <button class="appt${isPast(a.date) ? " past" : ""}" data-i="${a.di}" data-name="${esc(s.name)}">
+          <span class="d">${long(a.date)} · ${a.start < "12:00" ? "vm" : "nm"}</span>
+          <span class="t num">${tm(a.start)}–${tm(a.end)}</span>
+          <span class="who ${a.teacher}">${a.teacher}</span>${checks.has(key(a.date, s.name)) ? `<span class="ok">✓ geweest</span>` : ""}
+        </button>`).join("")}</div>
+    </div>`).join("") + (hits.length > 6 ? `<p class="hint">Nog ${hits.length - 6} andere namen. Typ verder om te verfijnen.</p>` : "");
+}
+
+resEl.addEventListener("click", e => {
+  const b = e.target.closest(".appt"); if (!b) return;
+  highlight = b.dataset.name; select(+b.dataset.i, true);
+});
+qEl.addEventListener("input", renderResults);
+
+try { const saved = localStorage.getItem("fb-q"); if (saved) qEl.value = saved; } catch (e) {}
+renderTabs(); renderPanel(); renderResults();
+
+// ---- Vinkjes via Google Sheet (Apps Script web-app) ----
+const SHEET_URL = window.FEEDBACK_SHEET_URL || "";
+let code = "";
+try { code = localStorage.getItem("fb-code") || ""; } catch (e) {}
+
+function showStatus(msg, isLive){
+  const el = document.getElementById("status");
+  el.textContent = msg; el.classList.toggle("live", !!isLive);
+}
+function teacherNote(){
+  const el = document.getElementById("tnote");
+  el.hidden = !canWrite;
+  el.innerHTML = `Docentenmodus: vink een student af zodra die geweest is. Studenten zien het binnen een halve minuut. <button type="button" id="logout" class="linkbtn">Afmelden</button>`;
+}
+
+async function loadChecks(){
+  if (!SHEET_URL) return;
+  try {
+    const res = await fetch(SHEET_URL + "?t=" + Date.now());
+    const json = await res.json();
+    checks.clear();
+    for (const c of json.checks || []) if (!busy.has(c.key)) checks.set(c.key, c);
+    for (const k of busy) { /* keep optimistic state until the write settles */ }
+    live = true;
+    const d = new Date();
+    showStatus(`Vinkjes bijgewerkt om ${String(d.getHours()).padStart(2,"0")}.${String(d.getMinutes()).padStart(2,"0")}`, true);
+    renderTabs(); renderPanel(); renderResults();
+  } catch (e) {
+    showStatus("Vinkjes konden niet geladen worden. Probeer later opnieuw.");
+  }
+}
+
+async function send(body){
+  const res = await fetch(SHEET_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ ...body, code }) });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || "fout");
+  return json;
+}
+
+panelEl.addEventListener("change", async e => {
+  const cb = e.target.closest("input[type=checkbox]"); if (!cb) return;
+  const k = cb.dataset.k, on = cb.checked, prev = checks.get(k);
+  busy.add(k);
+  if (on) checks.set(k, { key: k, at: new Date().toISOString() }); else checks.delete(k);
+  renderPanel();
+  try { await send({ key: k, on }); }
+  catch (err) {
+    if (prev) checks.set(k, prev); else checks.delete(k);
+    if (String(err.message).includes("code")) { canWrite = false; code = ""; try { localStorage.removeItem("fb-code"); } catch (x) {} teacherNote(); showStatus("De docentencode klopt niet meer. Meld je opnieuw aan."); }
+    else showStatus("Het vinkje is niet bewaard. Probeer opnieuw.");
+  } finally { busy.delete(k); renderPanel(); renderResults(); }
+});
+
+// docent aanmelden
+const loginForm = document.getElementById("login");
+const loginMsg = document.getElementById("login-msg");
+document.getElementById("teacher-btn").addEventListener("click", () => { loginForm.hidden = !loginForm.hidden; if (!loginForm.hidden) document.getElementById("code").focus(); });
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  code = document.getElementById("code").value.trim();
+  loginMsg.textContent = "Code controleren…";
+  try {
+    await send({ check: true });
+    try { localStorage.setItem("fb-code", code); } catch (x) {}
+    canWrite = true; loginForm.hidden = true; loginMsg.textContent = "";
+    document.getElementById("teacher-btn").hidden = true;
+    teacherNote(); renderPanel();
+  } catch (err) { code = ""; loginMsg.textContent = "Die code klopt niet."; }
+});
+document.getElementById("tnote").addEventListener("click", e => {
+  if (e.target.id !== "logout") return;
+  canWrite = false; code = ""; try { localStorage.removeItem("fb-code"); } catch (x) {}
+  document.getElementById("teacher-btn").hidden = false;
+  teacherNote(); renderPanel();
+});
+
+if (SHEET_URL) {
+  document.getElementById("teacher").hidden = false;
+  if (code) { canWrite = true; document.getElementById("teacher-btn").hidden = true; teacherNote(); renderPanel(); }
+  loadChecks();
+  setInterval(loadChecks, 30000);
+  setInterval(() => { if (live && DAYS[current].date === today) renderPanel(); }, 60000);
+}
+</script>
+
+
+</body>
+</html>
