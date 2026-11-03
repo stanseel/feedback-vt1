@@ -244,7 +244,7 @@ function renderDigital(slots, teacher, date){
   }).join("");
   return `<div class="col">
     <h4><span class="who ${teacher}">${teacher}</span> <small class="num">${live && done ? `${done}/${named.length} besproken` : `${named.length} studenten`}</small></h4>
-    <p class="digital">${teacher} is er deze week niet. Stuur je werk digitaal door naar ${teacher}. Je krijgt je feedback via een Panopto-opname.</p>
+    <p class="digital">${teacher} is er deze week niet. Bewaar je werk als PDF (geoptimaliseerd voor scherm) en stuur het in een Teamsbericht naar ${teacher}. Je krijgt je feedback in het weekend via een Panopto-opname.</p>
     <ol class="slots">${rows}</ol>
   </div>`;
 }
@@ -331,7 +331,7 @@ function renderResults(){
       <div class="appts">${s.appts.map(a => `
         <button class="appt${isPast(a.date) ? " past" : ""}" data-i="${a.di}" data-name="${esc(s.name)}">
           <span class="d">${long(a.date)}${isDigital(a.date, a.teacher) ? "" : ` · ${a.start < "12:00" ? "vm" : "nm"}`}</span>
-          <span class="t${isDigital(a.date, a.teacher) ? " dig" : " num"}">${isDigital(a.date, a.teacher) ? "Digitaal: werk doorsturen, feedback via Panopto" : `${tm(a.start)}–${tm(a.end)}`}</span>
+          <span class="t${isDigital(a.date, a.teacher) ? " dig" : " num"}">${isDigital(a.date, a.teacher) ? "Digitaal: PDF via Teams, feedback in het weekend via Panopto" : `${tm(a.start)}–${tm(a.end)}`}</span>
           <span class="who ${a.teacher}">${a.teacher}</span>${checks.has(key(a.date, s.name)) ? `<span class="ok">✓ ${isDigital(a.date, a.teacher) ? "besproken" : "geweest"}</span>` : ""}
         </button>`).join("")}</div>
     </div>`).join("") + (hits.length > 6 ? `<p class="hint">Nog ${hits.length - 6} andere namen. Typ verder om te verfijnen.</p>` : "");
