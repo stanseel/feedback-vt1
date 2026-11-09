@@ -291,7 +291,7 @@ function renderPanel(){
   panelEl.setAttribute("aria-labelledby", `tab-${current}`);
   panelEl.innerHTML = `
     <div class="panel-head"><h2>${long(d.date)[0].toUpperCase() + long(d.date).slice(1)}</h2><span class="hint">${d.program ? "les" : `feedbackronde ${DAYS.filter(x => !x.program).indexOf(d) + 1} van 3`}</span></div>
-    ${d.program ? `<div class="cancelled"><strong>Op het programma</strong><ul>${d.program.map(x => `<li>${esc(x)}</li>`).join("")}</ul><span>Er zijn die dag geen feedbackgesprekken over de eindopdracht.</span></div>` : `<div class="halves">
+    ${d.program ? `<div class="cancelled"><strong>Op het programma</strong><ul>${d.program.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : `<div class="halves">
       ${renderHalf(d.am, "Voormiddag", "11.30", "8.30–11.30", d.date)}
       ${renderHalf(d.pm, "Namiddag", "15.30", "12.30–15.30", d.date)}
     </div>`}`;
